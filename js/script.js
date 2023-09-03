@@ -249,8 +249,7 @@ async function displayShowDetails() {
   movieDetailsBackground('TV', showDetailsRes.backdrop_path);
 }
 
-// display now playing slider
-
+// display now playing movie slider
 async function nowPlaying() {
   const { results } = await fetchData('/movie/now_playing');
 
@@ -279,10 +278,39 @@ async function nowPlaying() {
           </div>`;
     document.querySelector('.swiper-wrapper').appendChild(div);
     initSwiper();
-    // movieDetailsBackground('TV', result.backdrop_path);
   });
+}
 
-  console.log(results);
+// display playing now shows
+async function trendingShows() {
+  const { results } = await fetchData('trending/tv/day');
+
+  results.forEach((result) => {
+    const div = document.createElement('div');
+    div.className = 'swiper-slide';
+    div.innerHTML = `
+    <div class="swiper-slide">
+    <a href="tv-details.html?id=${result.id}">
+
+            ${
+              result.poster_path
+                ? `    <img
+                src="https://image.tmdb.org/t/p/w500${result.poster_path}"
+
+                  alt="Movie Title" />`
+                : `    <img src="./images/no-image.jpg" alt="Movie Title" />`
+            }
+          
+            </a>
+            <h4 class="swiper-rating">
+              <i class="fas fa-star text-secondary"></i> ${
+                result.vote_average
+              } / 10
+            </h4>
+          </div>`;
+    document.querySelector('.swiper-wrapper').appendChild(div);
+    initSwiper();
+  });
 }
 
 function initSwiper() {
@@ -293,7 +321,7 @@ function initSwiper() {
     loop: true,
     autoplay: {
       delay: 4000,
-      // disableOnInteraction: false,
+      disableOnInteraction: false,
     },
     breakpoints: {
       500: {
@@ -358,6 +386,7 @@ function init() {
       break;
     case '/shows.html':
       displayPopularShows();
+      trendingShows();
       break;
     case '/movie-details.html':
       displayMovieDetails();
