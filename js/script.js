@@ -12,7 +12,7 @@ function highligthCurrenLink() {
   });
 }
 
-// show popular movies
+// display popular movies
 async function displayPopularMovies() {
   const { results } = await fetchData('/movie/popular');
 
@@ -45,7 +45,6 @@ async function displayPopularMovies() {
 
     document.querySelector('#popular-movies').appendChild(div);
   });
-  console.log(results);
 }
 
 // display popular shows
@@ -81,7 +80,6 @@ async function displayPopularShows() {
 
     document.querySelector('#popular-shows').appendChild(div);
   });
-  console.log(results);
 }
 
 //Display movies details page
@@ -152,8 +150,6 @@ async function displayMovieDetails() {
 `;
 
   movieDetailsBackground('movie', movieDetailRes.backdrop_path);
-
-  console.log(movieDetailRes);
 }
 
 // background image for movie details
@@ -177,6 +173,143 @@ function movieDetailsBackground(type, path) {
   } else {
     document.querySelector('#show-details').appendChild(overlayDiv);
   }
+}
+
+// display show details
+async function displayShowDetails() {
+  const showId = window.location.search.split('=')[1];
+  const showDetailsRes = await fetchData(`/tv/${showId}`);
+  document.querySelector('#show-details').innerHTML = `
+        <div class="details-top">
+          <div>
+
+          ${
+            showDetailsRes.poster_path
+              ? `<img
+            src="https://image.tmdb.org/t/p/w500${showDetailsRes.poster_path}"
+            class="card-img-top"
+            alt="Show Name"
+          />`
+              : ` <img
+                src='../images/no-image.jpg'
+                class='card-img-top'
+                alt='Show Name'
+              />`
+          }
+            
+          </div>
+          <div>
+            <h2>${showDetailsRes.original_name}</h2>
+            <p>
+              <i class="fas fa-star text-primary"></i>
+              ${showDetailsRes.vote_average.toFixed(1)} / 10
+            </p>
+            <p class="text-muted">Release Date: ${
+              showDetailsRes.first_air_date
+            }</p>
+            <p>
+             ${showDetailsRes.overview}
+            </p>
+            <h5>Genres</h5>
+            <ul class="list-group">
+
+            ${showDetailsRes.genres
+              .map((genre) => `<li>${genre.name}</li>`)
+              .join('')}
+              
+            
+            </ul>
+            <a href="${
+              showDetailsRes.homepage
+            }}" target="_blank" class="btn">Visit Show Homepage</a>
+          </div>
+        </div>
+        <div class="details-bottom">
+          <h2>Show Info</h2>
+          <ul>
+            <li><span class="text-secondary">Number Of Episodes:</span> ${
+              showDetailsRes.number_of_episodes
+            }</li>
+            <li>
+              <span class="text-secondary">Last Episode To Air:</span> ${
+                showDetailsRes.last_episode_to_air.name
+              }
+            </li>
+            <li><span class="text-secondary">Status:</span> ${
+              showDetailsRes.status
+            }</li>
+          </ul>
+          <h4>Production Companies</h4>
+          <div class="list-group">${showDetailsRes.production_companies
+            .map((company) => company.name)
+            .join(', ')}</div>
+        </div>
+`;
+
+  movieDetailsBackground('TV', showDetailsRes.backdrop_path);
+}
+
+// display now playing slider
+
+async function nowPlaying() {
+  const { results } = await fetchData('/movie/now_playing');
+
+  results.forEach((result) => {
+    const div = document.createElement('div');
+    div.className = 'swiper-slide';
+    div.innerHTML = `
+    <div class="swiper-slide">
+            <a href="movie-details.html?id=${result.id}">
+
+            ${
+              result.poster_path
+                ? `    <img
+                src="https://image.tmdb.org/t/p/w500${result.poster_path}"
+
+                  alt="Movie Title" />`
+                : `    <img src="./images/no-image.jpg" alt="Movie Title" />`
+            }
+          
+            </a>
+            <h4 class="swiper-rating">
+              <i class="fas fa-star text-secondary"></i> ${
+                result.vote_average
+              } / 10
+            </h4>
+          </div>`;
+    document.querySelector('.swiper-wrapper').appendChild(div);
+    initSwiper();
+    // movieDetailsBackground('TV', result.backdrop_path);
+  });
+
+  console.log(results);
+}
+
+function initSwiper() {
+  const swiper = new Swiper('.swiper', {
+    slidesPerView: 1,
+    spaceBetween: 30,
+    freeMode: true,
+    loop: true,
+    autoplay: {
+      delay: 4000,
+      // disableOnInteraction: false,
+    },
+    breakpoints: {
+      500: {
+        slidesPerView: 2,
+        spaceBetween: 20,
+      },
+      700: {
+        slidesPerView: 3,
+        spaceBetween: 30,
+      },
+      1200: {
+        slidesPerView: 4,
+        spaceBetween: 40,
+      },
+    },
+  });
 }
 
 // add comma to amount
@@ -221,6 +354,7 @@ function init() {
     case '/':
     case '/index.html':
       displayPopularMovies();
+      nowPlaying();
       break;
     case '/shows.html':
       displayPopularShows();
@@ -228,8 +362,8 @@ function init() {
     case '/movie-details.html':
       displayMovieDetails();
       break;
-    case 'tv-details.html':
-      console.log('Tv details');
+    case '/tv-details.html':
+      displayShowDetails();
       break;
 
     case '/search.html':
