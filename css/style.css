@@ -328,16 +328,30 @@ section h2 {
 
 /* Alert */
 .alert {
-  background: red;
   padding: 10px 20px;
   margin-bottom: 20px;
   border-radius: 5px;
 }
 
-.alert-success {
+.success {
   background: green;
 }
 
-.alert-error {
+.error {
   background: red;
+}
+
+@media screen and (max-width: 550px) {
+  .details-top {
+    flex-direction: column;
+
+    justify-content: center;
+    align-items: center;
+    /* margin: 0; */
+  }
+
+  .details-top img {
+    margin-right: 0;
+    padding-inline: 30px;
+  }
 }
