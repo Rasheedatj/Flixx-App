@@ -3,7 +3,9 @@ const globalPage = {
   search: {
     type: '',
     term: '',
-    page: '1',
+    page: 1,
+    totalPages: 1,
+    totalResult: 0,
   },
   api: {
     apiKey: 'a94ae944aa868b69f77498d7ac2baaf1',
@@ -374,6 +376,9 @@ function displaySearchResult(results) {
                 </div>
                 </a>`);
 
+    document.getElementById('search-results-heading').innerHTML = `
+    <p>${results.length} of ${globalPage.search.totalResult} for ${globalPage.search.term} </p>
+    `;
     document.getElementById('search-results').appendChild(div);
   });
 }
@@ -413,7 +418,11 @@ async function search() {
   globalPage.search.term = urlParams.get('search-term');
 
   if (globalPage.search.term !== '' && globalPage.search.term !== null) {
-    const { results, total_pages, page_number } = await searchApiData();
+    const { results, total_pages, page, total_results } = await searchApiData();
+
+    globalPage.search.totalPages = total_pages;
+    globalPage.search.totalResult = total_results;
+    globalPage.search.page = page;
 
     if (results.length === 0) {
       showAlert('No result found', 'error');

@@ -318,6 +318,13 @@ section h2 {
   color: #fff;
 }
 
+#search-results-heading p {
+  text-align: center;
+  margin: 3rem 0;
+  font-size: 28px;
+  font-weight: bold;
+}
+
 .pagination {
   margin-top: 20px;
 }
