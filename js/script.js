@@ -93,11 +93,11 @@ async function displayPopularShows() {
   });
 }
 
-//Display movies  detas
+//Display movies  details
 async function displayMovieDetails() {
   const movieId = window.location.search.split('=')[1];
   const movieDetailRes = await fetchData(`movie/${movieId}`);
-  const credits = await movieCredits(movieId);
+  const credits = await movieCredits('movie', movieId);
 
   const div = document.querySelector('#movie-details');
   div.innerHTML = `
@@ -154,7 +154,7 @@ async function displayMovieDetails() {
     <li><span class="text-secondary">Cast:</span> ${credits.credits.cast
       .map(
         (person) =>
-          `<a href="cast-details.html?id=${person.cast_id}" target="_blank" class="cast_name"> ${person.name}</a>`
+          `<a href="cast-details.html?id=${person.id}" target="_blank" class="cast_name"> ${person.name}</a>`
       )
       .slice(0, 5)
       .join(`,  `)}</li>
@@ -266,8 +266,8 @@ function movieDetailsBackground(type, path) {
 async function displayShowDetails() {
   const showId = window.location.search.split('=')[1];
   const showDetailsRes = await fetchData(`/tv/${showId}`);
-  const credits = await movieCredits(showId);
-
+  const credits = await movieCredits('tv', showId);
+  console.log(credits);
   document.querySelector('#show-details').innerHTML = `
         <div class="details-top">
           <div>
@@ -330,7 +330,7 @@ async function displayShowDetails() {
             <li><span class="text-secondary">Cast:</span> ${credits.credits.cast
               .map(
                 (person) =>
-                  `<a href="cast-details.html?id=${person.cast_id}" target="_blank" class="cast_name"> ${person.name}</a>`
+                  `<a href="cast-details.html?id=${person.id}" target="_blank" class="cast_name"> ${person.name}</a>`
               )
               .slice(0, 5)
               .join(`,  `)}</li>
@@ -610,11 +610,11 @@ async function fetchData(endpoint) {
 }
 
 // fetch movie credits
-async function movieCredits(movieId) {
+async function movieCredits(type, movieId) {
   const API_KEY = globalPage.api.apiKey;
   const apiURL = globalPage.api.apiUrl;
   const person = await fetch(
-    `${apiURL}movie/${movieId}?api_key=${API_KEY}&append_to_response=credits
+    `${apiURL}${type}/${movieId}?api_key=${API_KEY}&append_to_response=credits
     `,
     {
       method: 'GET',
