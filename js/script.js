@@ -211,7 +211,7 @@ async function displayCastDetails() {
     </div>
   </div>
   <div class="details-bottom">
-    <h2>Show Info</h2>
+    <h2>Cast Info</h2>
     <ul>
       <li><span class="text-secondary">Known for:</span> ${
         cast.known_for_department
