@@ -204,10 +204,14 @@ async function displayCastDetails() {
       <p>
        ${cast.biography}
       </p>
+      
+      ${
+        cast.homepage !== null
+          ? `    <a href="${cast.homepage}" target="_blank" class="btn">Visit Show Homepage</a>`
+          : ''
+      }
      
-      <a href="${
-        cast.homepage
-      }}" target="_blank" class="btn">Visit Show Homepage</a>
+  
     </div>
   </div>
   <div class="details-bottom">
