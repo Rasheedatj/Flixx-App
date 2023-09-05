@@ -93,10 +93,11 @@ async function displayPopularShows() {
   });
 }
 
-//Display movies details page
+//Display movies  detas
 async function displayMovieDetails() {
   const movieId = window.location.search.split('=')[1];
   const movieDetailRes = await fetchData(`movie/${movieId}`);
+  const credits = await movieCredits(movieId);
 
   const div = document.querySelector('#movie-details');
   div.innerHTML = `
@@ -150,6 +151,14 @@ async function displayMovieDetails() {
     <li><span class="text-secondary">Status:</span> ${
       movieDetailRes.status
     }</li>
+    <li><span class="text-secondary">Cast:</span> ${credits.credits.cast
+      .map(
+        (person) =>
+          `<a href="cast-details.html?id=${person.cast_id}" target="_blank" class="cast_name"> ${person.name}</a>`
+      )
+      .slice(0, 5)
+      .join(`,  `)}</li>
+  
     
   </ul>
   <h4>Production Companies</h4>
@@ -161,6 +170,71 @@ async function displayMovieDetails() {
 `;
 
   movieDetailsBackground('movie', movieDetailRes.backdrop_path);
+}
+
+// display cast details
+async function displayCastDetails() {
+  const castId = window.location.search.split('=')[1];
+  const cast = await fetchData(`person/${castId}`);
+  console.log(cast);
+
+  document.querySelector('#cast-details').innerHTML = `
+  <div class="details-top">
+    <div>
+
+    ${
+      cast.profile_path
+        ? `<img
+      src="https://image.tmdb.org/t/p/w500${cast.profile_path}"
+      class="card-img-top"
+      alt="Show Name"
+    />`
+        : ` <img
+          src='../images/no-image.jpg'
+          class='card-img-top'
+          alt='Show Name'
+        />`
+    }
+      
+    </div>
+    <div>
+      <h2>${cast.name}</h2>
+      
+      <p class="text-muted">Popularity: ${cast.popularity.toFixed(1)}</p>
+      <p>
+       ${cast.biography}
+      </p>
+     
+      <a href="${
+        cast.homepage
+      }}" target="_blank" class="btn">Visit Show Homepage</a>
+    </div>
+  </div>
+  <div class="details-bottom">
+    <h2>Show Info</h2>
+    <ul>
+      <li><span class="text-secondary">Known for:</span> ${
+        cast.known_for_department
+      }</li>
+      <li>
+        <span class="text-secondary">Place of birth:</span> ${
+          cast.place_of_birth
+        }
+      </li>
+      <li><span class="text-secondary">Birthday:</span> ${cast.birthday}</li>
+    </ul>
+    <h4>Also known as</h4>
+    <div class="list-group">${cast.also_known_as
+      .map((aka) => aka)
+      .join(', ')}</div>
+   
+  </div>
+`;
+  movieDetailsBackground('cast', cast.profile_path);
+
+  // document.getElementById(
+  //   'goBackButton'
+  // ).href = `/cast-details.html?id=${castId}`;
 }
 
 // background image for movie details
@@ -181,8 +255,10 @@ function movieDetailsBackground(type, path) {
 
   if (type === 'movie') {
     document.querySelector('#movie-details').appendChild(overlayDiv);
-  } else {
+  } else if (type === 'TV') {
     document.querySelector('#show-details').appendChild(overlayDiv);
+  } else {
+    document.querySelector('#cast-details').appendChild(overlayDiv);
   }
 }
 
@@ -190,6 +266,8 @@ function movieDetailsBackground(type, path) {
 async function displayShowDetails() {
   const showId = window.location.search.split('=')[1];
   const showDetailsRes = await fetchData(`/tv/${showId}`);
+  const credits = await movieCredits(showId);
+
   document.querySelector('#show-details').innerHTML = `
         <div class="details-top">
           <div>
@@ -249,6 +327,13 @@ async function displayShowDetails() {
             <li><span class="text-secondary">Status:</span> ${
               showDetailsRes.status
             }</li>
+            <li><span class="text-secondary">Cast:</span> ${credits.credits.cast
+              .map(
+                (person) =>
+                  `<a href="cast-details.html?id=${person.cast_id}" target="_blank" class="cast_name"> ${person.name}</a>`
+              )
+              .slice(0, 5)
+              .join(`,  `)}</li>
           </ul>
           <h4>Production Companies</h4>
           <div class="list-group">${showDetailsRes.production_companies
@@ -520,8 +605,27 @@ async function fetchData(endpoint) {
     }
   );
   const data = await response.json();
-
   hideSpinner();
+  return data;
+}
+
+// fetch movie credits
+async function movieCredits(movieId) {
+  const API_KEY = globalPage.api.apiKey;
+  const apiURL = globalPage.api.apiUrl;
+  const person = await fetch(
+    `${apiURL}movie/${movieId}?api_key=${API_KEY}&append_to_response=credits
+    `,
+    {
+      method: 'GET',
+      headers: {
+        accept: 'application/json',
+        Authorization:
+          'Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJhOTRhZTk0NGFhODY4YjY5Zjc3NDk4ZDdhYzJiYWFmMSIsInN1YiI6IjY0ZjBmNzY3Y2FhNTA4MDE0YzhiYjk4NiIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.vsI9vscEh5elOXMgmG6ESChyA6rAg6DM4xtnbqXfWtU',
+      },
+    }
+  );
+  const data = await person.json();
   return data;
 }
 
@@ -544,7 +648,6 @@ async function searchApiData() {
     }
   );
   const data = await response.json();
-
   hideSpinner();
   return data;
 }
@@ -569,6 +672,9 @@ function init() {
 
     case '/search.html':
       search();
+      break;
+    case '/cast-details.html':
+      displayCastDetails();
       break;
   }
 

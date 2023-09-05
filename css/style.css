@@ -348,6 +348,10 @@ section h2 {
   background: red;
 }
 
+.cast_name {
+  text-decoration: underline;
+}
+
 @media screen and (max-width: 550px) {
   .details-top {
     flex-direction: column;
