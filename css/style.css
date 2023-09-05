@@ -349,7 +349,13 @@ section h2 {
 }
 
 .cast_name {
-  text-decoration: underline;
+  word-spacing: 2px;
+}
+
+.fa-external-link {
+  font-size: 10px;
+  color: #f1c40f;
+  vertical-align: text-top;
 }
 
 @media screen and (max-width: 550px) {

@@ -154,7 +154,10 @@ async function displayMovieDetails() {
     <li><span class="text-secondary">Cast:</span> ${credits.credits.cast
       .map(
         (person) =>
-          `<a href="cast-details.html?id=${person.id}" target="_blank" class="cast_name"> ${person.name}</a>`
+          `<a href="cast-details.html?id=${person.id}" target="_blank" class="cast_name">
+            ${person.name}
+            <i class="fa fa-external-link" aria-hidden="true"></i>
+          </a>`
       )
       .slice(0, 5)
       .join(`,  `)}</li>
@@ -200,14 +203,17 @@ async function displayCastDetails() {
     <div>
       <h2>${cast.name}</h2>
       
-      <p class="text-muted">Popularity: ${cast.popularity.toFixed(1)}</p>
+      <p class="text-muted">
+        <i class="fas fa-star text-primary"></i>
+        Popularity: ${cast.popularity.toFixed(1)} / 100
+      </p>
       <p>
        ${cast.biography}
       </p>
       
       ${
         cast.homepage !== null
-          ? `    <a href="${cast.homepage}" target="_blank" class="btn">Visit Show Homepage</a>`
+          ? `    <a href="${cast.homepage}" target="_blank" class="btn">Visit Cast Homepage</a>`
           : ''
       }
      
@@ -225,6 +231,15 @@ async function displayCastDetails() {
           cast.place_of_birth
         }
       </li>
+       ${
+         cast.gender === 1
+           ? ` <li>
+        <span class="text-secondary">Gender:</span>Female
+      </li>`
+           : ` <li>
+      <span class="text-secondary">Gender:</span> Male
+    </li>`
+       }
       <li><span class="text-secondary">Birthday:</span> ${cast.birthday}</li>
     </ul>
     <h4>Also known as</h4>
@@ -334,7 +349,10 @@ async function displayShowDetails() {
             <li><span class="text-secondary">Cast:</span> ${credits.credits.cast
               .map(
                 (person) =>
-                  `<a href="cast-details.html?id=${person.id}" target="_blank" class="cast_name"> ${person.name}</a>`
+                  `<a href="cast-details.html?id=${person.id}" target="_blank" class="cast_name">
+                     ${person.name}
+                     <i class="fa fa-external-link" aria-hidden="true"></i>
+                  </a>`
               )
               .slice(0, 5)
               .join(`,  `)}</li>
