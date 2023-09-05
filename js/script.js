@@ -330,6 +330,10 @@ function displaySearchResult(results) {
     ? (document.querySelector('#tv').checked = true)
     : (document.querySelector('#movie').checked = true);
 
+  document.querySelector('#search-results').innerHTML = '';
+  document.querySelector('#search-results-heading').innerHTML = '';
+  document.querySelector('#pagination').innerHTML = '';
+
   results.forEach((result) => {
     const div = document.createElement('div');
     div.className = 'card';
@@ -381,6 +385,46 @@ function displaySearchResult(results) {
     `;
     document.getElementById('search-results').appendChild(div);
   });
+
+  displayPagination();
+}
+
+// display pagination
+function displayPagination() {
+  const pageEl = document.createElement('div');
+  pageEl.classList.add('pagination');
+  pageEl.innerHTML = `
+  <button class="btn btn-primary" id="prev">Prev</button>
+  <button class="btn btn-primary" id="next">Next</button>
+  <div class="page-counter">Page ${globalPage.search.page} of ${globalPage.search.totalPages}</div>
+  `;
+
+  document.getElementById('pagination').appendChild(pageEl);
+
+  if (globalPage.search.page === 1) {
+    document.querySelector('#prev').disabled = true;
+  }
+
+  if (globalPage.search.page === globalPage.search.totalPages) {
+    document.querySelector('#next').disabled = true;
+  }
+
+  //display next page
+  document.querySelector('#next').addEventListener('click', async () => {
+    globalPage.search.page++;
+
+    const { results, total_pages } = await searchApiData();
+
+    displaySearchResult(results);
+  });
+  //display previous page
+  document.querySelector('#prev').addEventListener('click', async () => {
+    globalPage.search.page--;
+
+    const { results, total_pages } = await searchApiData();
+
+    displaySearchResult(results);
+  });
 }
 
 function initSwiper() {
@@ -429,8 +473,6 @@ async function search() {
     }
 
     displaySearchResult(results);
-
-    console.log(results);
   } else {
     showAlert('Pls enter a search item');
   }
@@ -491,7 +533,7 @@ async function searchApiData() {
   showSpinner();
 
   const response = await fetch(
-    `${API_URL}search/${globalPage.search.type}?api_key=${API_KEY}&language=en-US&query=${globalPage.search.term}`,
+    `${API_URL}search/${globalPage.search.type}?api_key=${API_KEY}&language=en-US&query=${globalPage.search.term}&page=${globalPage.search.page}`,
     {
       method: 'GET',
       headers: {
