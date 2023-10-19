@@ -534,6 +534,7 @@ function displayPagination() {
   });
 }
 
+// swiper
 function initSwiper() {
   const swiper = new Swiper('.swiper', {
     slidesPerView: 1,
@@ -554,7 +555,7 @@ function initSwiper() {
         spaceBetween: 30,
       },
       1200: {
-        slidesPerView: 4,
+        slidesPerView: 4.5,
         spaceBetween: 40,
       },
     },
@@ -635,6 +636,7 @@ async function fetchData(endpoint) {
 async function movieCredits(type, movieId) {
   const API_KEY = globalPage.api.apiKey;
   const apiURL = globalPage.api.apiUrl;
+  showSpinner();
   const person = await fetch(
     `${apiURL}${type}/${movieId}?api_key=${API_KEY}&append_to_response=credits
     `,
@@ -648,6 +650,7 @@ async function movieCredits(type, movieId) {
     }
   );
   const data = await person.json();
+  hideSpinner();
   return data;
 }
 
@@ -684,12 +687,14 @@ function init() {
     case '/shows.html':
       displayPopularShows();
       trendingShows();
+
       break;
     case '/movie-details.html':
       displayMovieDetails();
       break;
     case '/tv-details.html':
       displayShowDetails();
+
       break;
 
     case '/search.html':
