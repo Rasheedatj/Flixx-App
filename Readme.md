@@ -47,4 +47,4 @@ Please note that this is a fictional project created for demonstration purposes.
 
 ## About the Author
 
-The Traclorie Web App was created by [Jinadu Rasheedat](https://www.linkedin.com/in/rashedat-jinadu/). Rasheedat is a software developer with a passion for creating user-friendly applications.
+The Flixx Web App was created by [Jinadu Rasheedat](https://www.linkedin.com/in/rashedat-jinadu/). Rasheedat is a software developer with a passion for creating user-friendly applications.
